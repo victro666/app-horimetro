@@ -32,7 +32,7 @@ jobs:
       - name: Instalar Flet e Compilar APK
         run: |
           pip install flet==0.23.2 fpdf2
-          flet build apk --yes
+          flet build apk
 
       - name: Publicar APK para Download
         uses: actions/upload-artifact@v4
