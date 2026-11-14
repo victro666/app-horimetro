@@ -10,11 +10,31 @@ from fpdf import FPDF
 # 1. CAMADA DE PERSISTÊNCIA E CAMINHOS ANDROID (SQLITE LOCAL)
 # =====================================================================
 def obter_diretorio_dados():
-    """Retorna um diretório com permissão de escrita garantida no Android e no PC."""
+    import os
+    
     caminho = os.environ.get("FLET_APP_STORAGE_DATA")
+    
     if not caminho:
-        caminho = os.path.join(os.path.expanduser("~"), "horimetro_mvp_data")
-    os.makedirs(caminho, exist_ok=True)
+        # Verifica se o sistema atual é o Android
+        if "ANDROID_ROOT" in os.environ or "ANDROID_BOOTLOGO" in os.environ:
+            try:
+                # Lê o nome do pacote oficial do app (ex: com.flet.agrohorimetro) direto do processo
+                with open("/proc/self/cmdline", "r") as f:
+                    pacote = f.read().split('\0')[0]
+                # Caminho privado e permanente do app (onde o Android permite gravar sem restrições)
+                caminho = f"/data/data/{pacote}/files/horimetro_db"
+            except Exception:
+                caminho = "horimetro_db"
+        else:
+            # Computador (Windows/Linux/Mac)
+            caminho = os.path.join(os.path.expanduser("~"), "horimetro_mvp_data")
+    
+    # Proteção anti-crash: tenta criar a pasta, se for bloqueado, usa o diretório atual
+    try:
+        os.makedirs(caminho, exist_ok=True)
+    except Exception:
+        caminho = "."
+        
     return caminho
 
 
