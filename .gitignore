@@ -1,0 +1,15 @@
+# Ambientes Virtuais do Python
+venv/
+env/
+.env
+
+# Pastas de build e cache
+build/
+__pycache__/
+*.pyc
+*.db
+
+# Configurações de IDEs e Sistema
+.vscode/
+.idea/
+.DS_Store
